@@ -37,7 +37,14 @@ fun addFlight(FlightList: FlightTicket) {
         return
     }
 
-    FlightList.add(Flight(userFrom, userTo, userDate, userPrice))
+    print("Введите количество: ")
+    val userStock = readLine()!!.trim().toIntOrNull()
+    if (userStock == null || userStock < 1) {
+        println(ERROR)
+        return
+    }
+
+    FlightList.add(Flight(userFrom, userTo, userDate, userPrice, userStock))
     println("Билет добавлен!\n")
 }
 
@@ -52,7 +59,7 @@ fun tickets(flightList: FlightTicket) {
     }
 
     flightList.forEachIndexed { index, flight ->
-        println("${index + 1}. ${flight.from} -> ${flight.to} - ${flight.date}, ${flight.price}р.")
+        println("${index + 1}. ${flight.from} -> ${flight.to} - ${flight.date}, ${flight.price}р - Остаток [${flight.stock}]")
     }
     println()
 }
@@ -68,7 +75,7 @@ fun buyTicket(listFlight: FlightTicket, listTicket: MyTicket) {
     }
 
     listFlight.forEachIndexed { index, flight ->
-        println("${index + 1}. ${flight.from} -> ${flight.to} - ${flight.date}, ${flight.price}р.")
+        println("${index + 1}. ${flight.from} -> ${flight.to} - ${flight.date}, ${flight.price}р - Остаток [${flight.stock}]")
     }
 
     print("Выберите ID: ")
@@ -78,11 +85,28 @@ fun buyTicket(listFlight: FlightTicket, listTicket: MyTicket) {
         return
     }
 
-    val index = userByTicket - 1
-    val tickets = listFlight[index]
+    val ticket = listFlight[userByTicket - 1]
+    print("Введите количество: ")
+    val userStock = readLine()!!.trim().toIntOrNull()
+    if (userStock == null || userStock < 1) {
+        println(ERROR)
+        return
+    }
 
-    listTicket.add(tickets)
-    println("Билет куплен!\n")
+    if (userStock > ticket.stock) {
+        println("Нет столько билетов!\n")
+        return
+    }
+
+    listTicket.add(Flight(ticket.from, ticket.to, ticket.date, ticket.price, userStock))
+    ticket.stock -= userStock
+
+
+    if (ticket.stock == 0) {
+        listFlight.remove(ticket)
+    } else {
+        println("Билет куплен!\n")
+    }
 }
 
 
@@ -96,7 +120,7 @@ fun myTickets(myTickets: MyTicket) {
     }
 
     myTickets.forEachIndexed { index, flight ->
-        println("${index + 1}. ${flight.from} -> ${flight.to} - ${flight.date}, ${flight.price}р.")
+        println("${index + 1}. ${flight.from} -> ${flight.to} - ${flight.date}, ${flight.price}р - Остаток [${flight.stock}]")
     }
     println()
 }
@@ -124,8 +148,14 @@ fun searchTicket(listFlight: FlightTicket, listTicket: MyTicket) {
         return
     }
 
+    when (searchTicket.size) {
+        1 -> println("Найден: ${searchTicket.size} билет:\n")
+        in 2..4 -> println("Найдено: ${searchTicket.size} билета:\n")
+        in 5..20 -> println("Найдено: ${searchTicket.size} билетов:\n")
+    }
+
     searchTicket.forEachIndexed { index, flight ->
-        println("${index + 1}. ${flight.from} -> ${flight.to} - ${flight.date}, ${flight.price}р.")
+        println("${index + 1}. ${flight.from} -> ${flight.to} - ${flight.date}, ${flight.price}р - Остаток [${flight.stock}]")
     }
 
     print("Хотите купить билет? \"Да\" или \"Нет\": ")
@@ -143,9 +173,17 @@ fun searchTicket(listFlight: FlightTicket, listTicket: MyTicket) {
                 println(ERROR)
                 return
             }
-            val index = userID - 1
-            val tickets = searchTicket[index]
-            listTicket.add(tickets)
+
+            val tickets = searchTicket[userID - 1]
+            print("Введите количество: ")
+            val userStock = readLine()!!.trim().toIntOrNull()
+            if (userStock == null || userStock !in 1..tickets.stock) {
+                println(ERROR)
+                return
+            }
+
+            listTicket.add(Flight(tickets.from, tickets.to, tickets.date, tickets.price, userStock))
+            tickets.stock -= userStock
             println("Билет успешно добавлен в раздел: \"Мои\"\n")
         }
         "Нет" -> {
@@ -169,6 +207,6 @@ fun sumTickets(listFlight: FlightTicket) {
         return
     }
 
-    val sumTickets = listFlight.sumOf { it.price }
+    val sumTickets = listFlight.sumOf { it.price * it.stock }
     println("Сумма ваших билетов = $sumTickets р.\n")
 }
