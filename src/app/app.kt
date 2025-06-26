@@ -11,12 +11,11 @@ fun main() {
                 "2. Показать все рейсы\n" +
                 "3. Купить билет\n" +
                 "4. Мои билеты\n" +
-                "5. Общая сумма\n" +
-                "6. Поиск\n" +
-                "7. Выход")
+                "5. Поиск\n" +
+                "6. Выход")
         print("Выберите ID: ")
         val userID = readLine()!!.trim().toIntOrNull()
-        if (userID == null || userID !in 1..7) {
+        if (userID == null || userID !in 1..6) {
             println("Ошибка!\n")
             return
         }
@@ -25,9 +24,8 @@ fun main() {
             2 -> tickets(flightList)
             3 -> buyTicket(flightList, ticketList)
             4 -> myTickets(ticketList)
-            5 -> sumTickets(ticketList)
-            6 -> searchTicket(flightList, ticketList)
-            7 -> {
+            5 -> searchTicket(flightList, ticketList)
+            6 -> {
                 println("До свидание!")
                 break
             }

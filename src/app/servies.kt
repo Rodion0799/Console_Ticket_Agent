@@ -122,7 +122,9 @@ fun myTickets(myTickets: MyTicket) {
     myTickets.forEachIndexed { index, flight ->
         println("${index + 1}. ${flight.from} -> ${flight.to} - ${flight.date}, ${flight.price}р - Остаток [${flight.stock}]")
     }
-    println()
+
+    val sum = myTickets.sumOf { it.price * it.stock }
+    print("Сумма билетов: $sum р.\n")
 }
 
 /**
@@ -141,7 +143,10 @@ fun searchTicket(listFlight: FlightTicket, listTicket: MyTicket) {
         return
     }
 
-    val searchTicket = listFlight.filter { userFromOrTo == it.from || userFromOrTo == it.to }
+    val searchTicket = listFlight.filter {
+        it.from.contains(userFromOrTo, ignoreCase = true) ||
+                it.to.contains(userFromOrTo, ignoreCase = true)
+    }
 
     if (searchTicket.isEmpty()) {
         println("Не найдено!\n")
@@ -195,18 +200,4 @@ fun searchTicket(listFlight: FlightTicket, listTicket: MyTicket) {
             return
         }
     }
-}
-
-
-/**
- * Сумма билетов, добавленые в "Мои"
- */
-fun sumTickets(listFlight: FlightTicket) {
-    if (listFlight.isEmpty()) {
-        println("У вас нет билетов!\n")
-        return
-    }
-
-    val sumTickets = listFlight.sumOf { it.price * it.stock }
-    println("Сумма ваших билетов = $sumTickets р.\n")
 }
