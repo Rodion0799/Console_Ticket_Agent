@@ -8,7 +8,7 @@ const val ERROR = "Ошибка!\n"
 /**
  * Добавление рейса в систему
  */
-fun addFlight(FlightList: FlightTicket) {
+fun addFlight(flightList: FlightTicket) {
     print("Город отправления: ")
     val userFrom = readLine()!!.trim()
     if (userFrom.isBlank()) {
@@ -44,7 +44,7 @@ fun addFlight(FlightList: FlightTicket) {
         return
     }
 
-    FlightList.add(Flight(userFrom, userTo, userDate, userPrice, userStock))
+    flightList.add(Flight(userFrom, userTo, userDate, userPrice, userStock))
     println("Билет добавлен!\n")
 }
 
